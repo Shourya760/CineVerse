@@ -5,10 +5,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
 
-import dwarkaImg from "./assets/dwarka.jpg";
-import ambajiImg from "./assets/ambaji.jpg";
-import pavagadhImg from "./assets/pavagadh.jpg";
-import somnathImg from "./assets/somnath.jpg";
+import TempleDetails from "./pages/TempleDetails";
 
 
 function App() {
@@ -17,8 +14,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-         <Route path="/home" element={<Home />} />
-         <Route path="/login" element={<Login />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/temple/:id" element={<TempleDetails />} />
       </Routes>
     </BrowserRouter>
   );
