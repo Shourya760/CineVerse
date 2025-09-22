@@ -4,17 +4,39 @@ import dwarkaImg from "../assets/dwarka.jpg";
 import ambajiImg from "../assets/ambaji.jpg";
 import pavagadhImg from "../assets/pavagadh.jpg";
 import somnathImg from "../assets/somnath.jpg";
+import Header from "../components/Header";
 
 export default function TempleDetails() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const handleLogout = () => navigate("/login");
 
     // Same temple list as Home
     const temples = [
-        { id: "1", name: "Somnath Temple", image: somnathImg, description: "One of the twelve Jyotirlinga shrines of Shiva." },
-        { id: "2", name: "Dwarkadhish Temple", image: dwarkaImg, description: "Dedicated to Lord Krishna in Dwarka." },
-        { id: "3", name: "Ambaji Temple", image: ambajiImg, description: "A major Shakti Peeth of Goddess Amba." },
-        { id: "4", name: "Pavagadh Temple", image: pavagadhImg, description: "Shakti Peeth atop a hill near Champaner." },
+        {
+            id: "1",
+            name: "Somnath Temple",
+            image: somnathImg,
+            description: "One of the twelve Jyotirlinga shrines of Shiva.",
+        },
+        {
+            id: "2",
+            name: "Dwarkadhish Temple",
+            image: dwarkaImg,
+            description: "Dedicated to Lord Krishna in Dwarka.",
+        },
+        {
+            id: "3",
+            name: "Ambaji Temple",
+            image: ambajiImg,
+            description: "A major Shakti Peeth of Goddess Amba.",
+        },
+        {
+            id: "4",
+            name: "Pavagadh Temple",
+            image: pavagadhImg,
+            description: "Shakti Peeth atop a hill near Champaner.",
+        },
     ];
 
     const temple = temples.find((t) => t.id === id);
@@ -35,18 +57,23 @@ export default function TempleDetails() {
 
     return (
         <div className="flex flex-col min-h-screen bg-gray-50">
-            <header className="bg-indigo-800 text-white p-4 shadow-md">
-                <h1 className="text-2xl font-bold">{temple.name}</h1>
-            </header>
+            {/* Header */}
+            <Header handleLogout={handleLogout} currentTempleId={temple.id} />
 
+
+            {/* Content */}
             <main className="flex-1 max-w-5xl mx-auto p-6">
+                <h1 className="text-3xl font-bold text-indigo-700 mb-6 text-center">
+                    {temple.name}
+                </h1>
+
                 <img
                     src={temple.image}
                     alt={temple.name}
                     className="w-full h-80 object-cover rounded-xl shadow-md"
                 />
-                <h2 className="text-3xl font-bold mt-6 text-indigo-700">{temple.name}</h2>
-                <p className="mt-4 text-gray-700 text-lg">{temple.description}</p>
+
+                <p className="mt-6 text-gray-700 text-lg">{temple.description}</p>
 
                 {/* Example temple features */}
                 <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -73,6 +100,7 @@ export default function TempleDetails() {
                 </div>
             </main>
 
+            {/* Footer */}
             <footer className="bg-indigo-900 text-white text-center py-4">
                 <p>© {new Date().getFullYear()} Sudarshan</p>
             </footer>

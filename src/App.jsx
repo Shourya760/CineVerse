@@ -4,9 +4,8 @@ import React from "react";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
-
+import MapView from "./pages/MapView";
 import TempleDetails from "./pages/TempleDetails";
-
 
 function App() {
   return (
@@ -17,10 +16,11 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/temple/:id" element={<TempleDetails />} />
+        <Route path="/map" element={<MapView />} />          {/* Gujarat default */}
+        <Route path="/map/:id" element={<MapView />} />      {/* Temple-specific */}
       </Routes>
     </BrowserRouter>
   );
 }
 
 export default App;
-

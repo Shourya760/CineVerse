@@ -9,11 +9,21 @@ export default function Login() {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    console.log("Email:", email, "Password:", password);
 
-    // ✅ After successful login, go to Home page
-    navigate("/home");
+    // Simple check for empty fields
+    if (!email || !password) {
+      alert("Please enter both email and password.");
+      return;
+    }
+
+    // Mock login: only allow one hardcoded user
+    if (email === "axon@gmail.com" && password === "1234") {
+      navigate("/home"); // Success
+    } else {
+      alert("Invalid email or password.");
+    }
   };
+
 
   return (
     <div className="flex h-screen items-center justify-center bg-gray-100">
