@@ -5,6 +5,7 @@ import pavagadhImg from "../assets/pavagadh.jpg";
 import somnathImg from "../assets/somnath.jpg";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -183,11 +184,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-900 text-white text-center py-6 mt-auto">
-        <p className="text-sm">
-          © {new Date().getFullYear()} Team "AXON". All Rights Reserved.
-        </p>
-      </footer>
+      <Footer />
     </div>
   );
 }

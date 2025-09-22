@@ -118,7 +118,7 @@ export default function Header({ handleLogout, currentTempleId }) {
             Live Crowd
           </button>
           <button onClick={goToMap} className="block w-full text-left hover:text-yellow-300 transition">
-            Map View
+            Map View 
           </button>
           <button onClick={() => navigate("/profile")} className="block w-full text-left hover:text-yellow-300 transition">
             Profile

@@ -5,6 +5,7 @@ import ambajiImg from "../assets/ambaji.jpg";
 import pavagadhImg from "../assets/pavagadh.jpg";
 import somnathImg from "../assets/somnath.jpg";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 export default function TempleDetails() {
     const { id } = useParams();
@@ -18,24 +19,28 @@ export default function TempleDetails() {
             name: "Somnath Temple",
             image: somnathImg,
             description: "One of the twelve Jyotirlinga shrines of Shiva.",
+            liveDarshanUrl: "https://www.youtube.com/live/ugQdBtfx_ks?si=8v1n9PqURv7dHDV1",
         },
         {
             id: "2",
             name: "Dwarkadhish Temple",
             image: dwarkaImg,
             description: "Dedicated to Lord Krishna in Dwarka.",
+            liveDarshanUrl: "https://www.youtube.com/live/xvC-xZmiItU?si=VxKJXtpkdRfEsCx7",
         },
         {
             id: "3",
             name: "Ambaji Temple",
             image: ambajiImg,
             description: "A major Shakti Peeth of Goddess Amba.",
+            liveDarshanUrl: "https://www.youtube.com/embed/P2-zdM-p9o4"
         },
         {
             id: "4",
             name: "Pavagadh Temple",
             image: pavagadhImg,
             description: "Shakti Peeth atop a hill near Champaner.",
+            liveDarshanUrl: "https://www.somnath.org/live-darshan",
         },
     ];
 
@@ -93,17 +98,19 @@ export default function TempleDetails() {
                     </div>
                     <div className="p-5 bg-white shadow rounded-xl">
                         <h3 className="font-semibold text-lg">Live Darshan</h3>
-                        <button className="mt-3 bg-green-600 text-white px-4 py-2 rounded-lg">
+                        <button
+                            onClick={() => window.open(temple.liveDarshanUrl, "_blank")}
+                            className="mt-3 bg-green-600 text-white px-4 py-2 rounded-lg"
+                        >
                             Watch Now
                         </button>
                     </div>
+
                 </div>
             </main>
 
             {/* Footer */}
-            <footer className="bg-indigo-900 text-white text-center py-4">
-                <p>© {new Date().getFullYear()} Sudarshan</p>
-            </footer>
+            <Footer />
         </div>
     );
 }

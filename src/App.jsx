@@ -7,18 +7,21 @@ import Home from "./pages/Home";
 import MapView from "./pages/MapView";
 import TempleDetails from "./pages/TempleDetails";
 
+
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/temple/:id" element={<TempleDetails />} />
-        <Route path="/map" element={<MapView />} />          {/* Gujarat default */}
-        <Route path="/map/:id" element={<MapView />} />      {/* Temple-specific */}
-      </Routes>
+      
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/temple/:id" element={<TempleDetails />} />
+          <Route path="/map" element={<MapView />} />          {/* Gujarat default */}
+          <Route path="/map/:id" element={<MapView />} />      {/* Temple-specific */}
+        </Routes>
+      
     </BrowserRouter>
   );
 }
