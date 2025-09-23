@@ -13,7 +13,6 @@ export default function Home() {
   const [liveData, setLiveData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-
   const temples = [
     {
       id: 1,
@@ -75,13 +74,13 @@ export default function Home() {
   const statusColor = (status) => {
     switch (status) {
       case "Low":
-        return "bg-green-500";
+        return "bg-green-100 text-green-700 border border-green-400";
       case "Moderate":
-        return "bg-yellow-400";
+        return "bg-yellow-100 text-yellow-700 border border-yellow-400";
       case "High":
-        return "bg-red-500";
+        return "bg-red-100 text-red-700 border border-red-400";
       default:
-        return "bg-gray-400";
+        return "bg-gray-200 text-gray-700 border border-gray-400";
     }
   };
 
@@ -94,29 +93,34 @@ export default function Home() {
     image,
   }) => (
     <div
-      className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+      className="bg-white rounded-2xl border border-indigo-200 shadow-md overflow-hidden flex flex-col hover:shadow-2xl hover:-translate-y-1 hover:border-indigo-400 transition-all duration-300 cursor-pointer"
       onClick={() => handleSelectTemple(id)}
     >
-      <img src={image} alt={name} className="w-full h-44 object-cover" />
+      <div className="relative overflow-hidden">
+        <img
+          src={image}
+          alt={name}
+          className="w-full h-48 object-cover transform hover:scale-110 transition duration-500"
+        />
+      </div>
       <div className="p-5 flex flex-col flex-1 justify-between">
         <div>
-          <h3 className="font-bold text-gray-800 text-lg">{name}</h3>
+          <h3 className="font-extrabold text-indigo-800 text-lg">{name}</h3>
           <p className="text-gray-600 text-sm mt-1">{description}</p>
         </div>
-        <div className="flex justify-between items-center mt-4 text-sm">
-          <div className="flex items-center gap-2">
-            <span
-              className={`h-3 w-3 rounded-full ${statusColor(crowdStatus)}`}
-            ></span>
-            <span>
-              Crowd: <strong>{crowdStatus}</strong>
-            </span>
-          </div>
-          <span>
+        <div className="flex justify-between items-center mt-4 text-xs sm:text-sm">
+          <span
+            className={`px-3 py-1 rounded-full font-medium ${statusColor(
+              crowdStatus
+            )}`}
+          >
+            Crowd: {crowdStatus}
+          </span>
+          <span className="text-gray-700">
             Wait: <strong>{waitTime}</strong>
           </span>
         </div>
-        <button className="mt-4 w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition">
+        <button className="mt-5 w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-2 rounded-lg font-semibold hover:from-indigo-700 hover:to-purple-700 transition shadow-md hover:shadow-lg">
           Select Temple
         </button>
       </div>
@@ -126,33 +130,33 @@ export default function Home() {
   const displayTemples = liveData || temples;
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-yellow-50 pt-14">
       {/* Header */}
       <Header handleLogout={handleLogout} />
 
       {/* Hero */}
-      <section className="relative w-full min-h-[70vh] sm:min-h-[75vh] md:min-h-[80vh] overflow-hidden">
+      <section className="relative w-full min-h-[75vh] md:min-h-[85vh] overflow-hidden">
         <img
           key={currentImageIndex}
           src={temples[currentImageIndex].image}
           alt={temples[currentImageIndex].name}
           className="absolute w-full h-full object-cover transition-opacity duration-1000 opacity-100"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-black/60"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/70"></div>
         <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-4 sm:px-6">
-          <h2 className="text-white text-2xl sm:text-3xl md:text-5xl font-extrabold drop-shadow-lg">
+          <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 text-3xl sm:text-4xl md:text-6xl font-extrabold drop-shadow-lg animate-pulse">
             {temples[currentImageIndex].name}
           </h2>
-          <p className="mt-3 sm:mt-5 text-gray-200 text-sm sm:text-lg md:text-xl max-w-xl drop-shadow">
+          <p className="mt-4 sm:mt-6 text-gray-200 text-sm sm:text-lg md:text-xl max-w-2xl drop-shadow">
             {temples[currentImageIndex].description}
           </p>
           <button
             onClick={() =>
               handleSelectTemple(temples[currentImageIndex].id)
             }
-            className="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg transition"
+            className="mt-8 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 hover:from-yellow-500 hover:via-orange-600 hover:to-red-600 text-white font-bold py-3 px-8 rounded-full transition transform hover:scale-105 shadow-lg"
           >
-            Select Temple
+            Explore Temple
           </button>
         </div>
       </section>
@@ -160,22 +164,25 @@ export default function Home() {
       {/* Temple Cards */}
       <section
         id="status"
-        className="py-12 px-4 sm:px-6 max-w-6xl mx-auto w-full"
+        className="py-16 px-4 sm:px-6 max-w-7xl mx-auto w-full"
       >
-        <h3 className="text-2xl sm:text-3xl font-bold text-indigo-700 text-center mb-10">
+        <h3 className="text-3xl sm:text-4xl font-extrabold text-center text-indigo-700 mb-4">
           Select a Temple
         </h3>
+        <div className="flex justify-center mb-10">
+          <div className="w-24 border-b-4 border-yellow-400"></div>
+        </div>
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
             {temples.map((_, idx) => (
               <div
                 key={idx}
-                className="bg-white rounded-2xl shadow-md h-64 animate-pulse"
+                className="bg-white rounded-2xl shadow-md h-72 animate-pulse"
               ></div>
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
             {displayTemples.map((temple) => (
               <TempleCard key={temple.id} {...temple} />
             ))}
