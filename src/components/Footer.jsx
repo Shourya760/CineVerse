@@ -1,47 +1,29 @@
-import { FaTwitter, FaFacebookF, FaInstagram, FaYoutube } from "react-icons/fa";
+// Footer.js
 import React from "react";
+import { FaTwitter, FaFacebookF, FaInstagram, FaYoutube } from "react-icons/fa";
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-300 py-10 px-6 md:px-16 relative">
-      {/* Gradient top border */}
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-400"></div>
-
-      {/* -------- Desktop -------- */}
-      <div className="hidden md:grid grid-cols-4 gap-10 text-left">
+    <footer className="bg-gradient-to-t from-black via-gray-900 to-gray-950 text-gray-400 py-10 px-6 md:px-16 relative border-t border-purple-600/20">
+      <div className="max-w-7xl mx-auto grid md:grid-cols-4 gap-10">
         {/* About */}
         <div>
-          <h3 className="text-yellow-400 font-semibold text-lg mb-3">About</h3>
+          <h3 className="text-purple-400 font-bold text-lg mb-3">About CineVerse</h3>
           <p className="text-sm leading-relaxed">
-            This platform is developed by{" "}
-            <span className="text-purple-400 font-medium">
-              Axon Software Pvt. Ltd.
-            </span>{" "}
-            for the{" "}
-            <span className="text-yellow-400 font-medium">
-              Government of Gujarat
-            </span>{" "}
-            to provide real-time information and services related to major
-            temples.
+            CineVerse is your world of <span className="text-pink-400">Movies</span>,{" "}
+            <span className="text-yellow-400">Series</span>, and{" "}
+            <span className="text-purple-400">Anime</span>. Explore, track, and
+            fall in love with cinematic universes again.
           </p>
         </div>
 
-        {/* Information */}
+        {/* Explore */}
         <div>
-          <h3 className="text-yellow-400 font-semibold text-lg mb-3">
-            Information
-          </h3>
+          <h3 className="text-purple-400 font-bold text-lg mb-3">Explore</h3>
           <ul className="space-y-2 text-sm">
-            {[
-              "About",
-              "Meet Our Team",
-              "Terms & Conditions",
-              "Privacy Policy",
-              "Refund Policy",
-              "Contact",
-            ].map((item) => (
+            {["Movies", "Series", "Anime", "Watchlist", "Profile"].map((item) => (
               <li key={item}>
-                <a href="#" className="hover:text-purple-400 transition">
+                <a href="#" className="hover:text-pink-400 transition">
                   {item}
                 </a>
               </li>
@@ -49,127 +31,44 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Helpful */}
+        {/* Connect */}
         <div>
-          <h3 className="text-yellow-400 font-semibold text-lg mb-3">
-            Helpful
-          </h3>
-          <p className="text-sm">📞 909 909 10 42</p>
-          <p className="text-sm mb-4">📧 axon.creation@gmail.com</p>
-          <div className="flex space-x-3">
-            <a
-              href="#"
-              className="bg-cyan-500 p-2 rounded-full shadow hover:scale-110 transition"
-            >
-              <FaTwitter className="text-white" />
-            </a>
-            <a
-              href="#"
-              className="bg-blue-600 p-2 rounded-full shadow hover:scale-110 transition"
-            >
-              <FaFacebookF className="text-white" />
-            </a>
-            <a
-              href="#"
-              className="bg-pink-500 p-2 rounded-full shadow hover:scale-110 transition"
-            >
-              <FaInstagram className="text-white" />
-            </a>
-            <a
-              href="#"
-              className="bg-red-600 p-2 rounded-full shadow hover:scale-110 transition"
-            >
-              <FaYoutube className="text-white" />
-            </a>
+          <h3 className="text-purple-400 font-bold text-lg mb-3">Connect</h3>
+          <div className="flex space-x-3 mt-3">
+            {[FaTwitter, FaFacebookF, FaInstagram, FaYoutube].map((Icon, i) => (
+              <a
+                key={i}
+                href="#"
+                className="p-2 bg-gray-800 rounded-full hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 hover:scale-110 transition"
+              >
+                <Icon className="text-white text-sm" />
+              </a>
+            ))}
           </div>
         </div>
 
         {/* Newsletter */}
         <div>
-          <h3 className="text-yellow-400 font-semibold text-lg mb-3">
-            Subscribe
-          </h3>
-          <p className="text-sm mb-2 text-gray-400">
-            Get updates in your inbox!
+          <h3 className="text-purple-400 font-bold text-lg mb-3">Stay Updated</h3>
+          <p className="text-sm mb-3">
+            Get notified about new releases and trending titles.
           </p>
-          <div className="flex flex-col md:flex-row md:space-x-2 space-y-2 md:space-y-0">
+          <div className="flex space-x-2">
             <input
               type="email"
-              placeholder="Email"
-              className="px-3 py-2 rounded-md bg-gray-200 text-gray-800 text-sm w-full focus:outline-none focus:ring-2 focus:ring-purple-400"
+              placeholder="Enter your email"
+              className="px-3 py-2 bg-gray-800 rounded-md text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
-            <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-yellow-400 text-white font-semibold py-2 px-6 rounded-md text-sm shadow">
-              SUBSCRIBE
+            <button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-pink-500 hover:to-yellow-400 text-white font-semibold px-4 py-2 rounded-md text-sm">
+              Subscribe
             </button>
           </div>
         </div>
       </div>
 
-      {/* -------- Mobile -------- */}
-      <div className="md:hidden flex flex-col items-center space-y-4">
-        {/* Social Icons */}
-        <div className="flex space-x-4">
-          <a
-            href="#"
-            className="bg-cyan-500 p-2 rounded-full shadow hover:scale-110 transition"
-          >
-            <FaTwitter className="text-white text-sm" />
-          </a>
-          <a
-            href="#"
-            className="bg-blue-600 p-2 rounded-full shadow hover:scale-110 transition"
-          >
-            <FaFacebookF className="text-white text-sm" />
-          </a>
-          <a
-            href="#"
-            className="bg-pink-500 p-2 rounded-full shadow hover:scale-110 transition"
-          >
-            <FaInstagram className="text-white text-sm" />
-          </a>
-          <a
-            href="#"
-            className="bg-red-600 p-2 rounded-full shadow hover:scale-110 transition"
-          >
-            <FaYoutube className="text-white text-sm" />
-          </a>
-        </div>
-
-        {/* Quick Links */}
-        <ul className="flex flex-wrap justify-center text-xs text-gray-400 gap-4">
-          <li>
-            <a href="#" className="hover:text-purple-400">
-              About
-            </a>
-          </li>
-          <li>
-            <a href="#" className="hover:text-purple-400">
-              Terms
-            </a>
-          </li>
-          <li>
-            <a href="#" className="hover:text-purple-400">
-              Privacy
-            </a>
-          </li>
-          <li>
-            <a href="#" className="hover:text-purple-400">
-              Contact
-            </a>
-          </li>
-        </ul>
-      </div>
-
       {/* Bottom Bar */}
-      <div className="border-t border-gray-700 mt-6 pt-4 text-center text-xs md:text-sm">
-        <p>
-          © 2025{" "}
-          <span className="text-yellow-400">Government of Gujarat</span>
-        </p>
-        <p>
-          Built by{" "}
-          <span className="text-purple-400">Axon Software Pvt. Ltd.</span>
-        </p>
+      <div className="border-t border-gray-800 mt-8 pt-4 text-center text-xs md:text-sm text-gray-500">
+        © 2025 <span className="text-purple-400 font-semibold">CineVerse</span> • All Rights Reserved
       </div>
     </footer>
   );

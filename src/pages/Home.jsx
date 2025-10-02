@@ -1,127 +1,192 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import dwarkaImg from "../assets/dwarka.jpg";
-import ambajiImg from "../assets/ambaji.jpg";
-import pavagadhImg from "../assets/pavagadh.jpg";
-import somnathImg from "../assets/somnath.jpg";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+// src/pages/Home.jsx
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { Star, Film, Tv, Zap } from "lucide-react";
+import moviesData from "../data/moviesData";
 
-export default function Home() {
-  const navigate = useNavigate();
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [liveData, setLiveData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [userPasses, setUserPasses] = useState(
-    JSON.parse(localStorage.getItem("userPasses")) || []
-  );
 
-  const temples = [
-    { id: 1, name: "Somnath Temple", image: somnathImg, description: "One of the twelve Jyotirlinga shrines of Shiva." },
-    { id: 2, name: "Dwarkadhish Temple", image: dwarkaImg, description: "Dedicated to Lord Krishna in Dwarka." },
-    { id: 3, name: "Ambaji Temple", image: ambajiImg, description: "A major Shakti Peeth of Goddess Amba." },
-    { id: 4, name: "Pavagadh Temple", image: pavagadhImg, description: "Shakti Peeth atop a hill near Champaner." },
-  ];
+const Home = () => {
+  const [content, setContent] = useState([]);
+  const [filteredContent, setFilteredContent] = useState([]);
+  const [genre, setGenre] = useState("All");
+  const [sortOrder, setSortOrder] = useState("default");
+  const [currentBanner, setCurrentBanner] = useState(0);
 
-  const handleLogout = () => navigate("/login");
-
-  // Carousel
   useEffect(() => {
+    setContent(moviesData);
+    setFilteredContent(moviesData);
+
     const interval = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % temples.length);
-    }, 5000);
+      setCurrentBanner((prev) => (prev + 1) % moviesData.length);
+    }, 6000);
+
     return () => clearInterval(interval);
   }, []);
 
-  // Live data simulation
+  // Filter & Sort
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      await new Promise((res) => setTimeout(res, 1500));
-      const newData = temples.map((temple) => {
-        const statuses = ["Low", "Moderate", "High"];
-        const status = statuses[Math.floor(Math.random() * statuses.length)];
-        const wait = `${Math.floor(Math.random() * 30) + 5} mins`;
-        return { ...temple, crowdStatus: status, waitTime: wait };
-      });
-      setLiveData(newData);
-      setIsLoading(false);
-    };
-    fetchData();
-    const interval = setInterval(fetchData, 20000);
-    return () => clearInterval(interval);
-  }, []);
+    let updated = [...content];
+    if (genre !== "All") updated = updated.filter((item) => item.genre.includes(genre));
 
-  const statusColor = (status) => {
-    switch (status) {
-      case "Low": return "bg-green-100 text-green-700 border border-green-400";
-      case "Moderate": return "bg-yellow-100 text-yellow-700 border border-yellow-400";
-      case "High": return "bg-red-100 text-red-700 border border-red-400";
-      default: return "bg-gray-200 text-gray-700 border border-gray-400";
-    }
-  };
+    if (sortOrder === "high") updated.sort((a, b) => b.rating - a.rating);
+    else if (sortOrder === "low") updated.sort((a, b) => a.rating - b.rating);
 
-  const TempleCard = ({ id, name, description, crowdStatus, waitTime, image }) => (
-    <div
-      className="bg-white rounded-2xl border border-indigo-200 shadow-md overflow-hidden flex flex-col hover:shadow-2xl hover:-translate-y-1 hover:border-indigo-400 transition-all duration-300 cursor-pointer"
-      onClick={() => navigate(`/temple/${id}`)}
-    >
-      <div className="relative overflow-hidden">
-        <img src={image} alt={name} className="w-full h-48 object-cover transform hover:scale-110 transition duration-500" />
-      </div>
-      <div className="p-5 flex flex-col flex-1 justify-between">
-        <div>
-          <h3 className="font-extrabold text-indigo-800 text-lg">{name}</h3>
-          <p className="text-gray-600 text-sm mt-1">{description}</p>
-        </div>
-        <div className="flex justify-between items-center mt-4 text-xs sm:text-sm">
-          <span className={`px-3 py-1 rounded-full font-medium ${statusColor(crowdStatus)}`}>
-            Crowd: {crowdStatus}
-          </span>
-          <span className="text-gray-700">Wait: <strong>{waitTime}</strong></span>
-        </div>
-      </div>
+    setFilteredContent(updated);
+  }, [genre, sortOrder, content]);
+
+  // Grid Renderer
+  const renderGrid = (items) => (
+    <div className="grid gap-6 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 max-w-7xl mx-auto">
+      {items.map((item) => (
+        <Link
+          key={item.id}
+          to={`/MovieDetails/${item.id}`}
+          className="group relative rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-purple-800/40 via-pink-800/30 to-yellow-600/20 backdrop-blur-md hover:scale-105 transition-transform duration-300 border border-gray-700"
+        >
+          <img
+            src={item.poster}
+            alt={item.title}
+            className="w-full h-64 object-cover rounded-2xl"
+          />
+          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4">
+            <h2 className="text-lg font-semibold text-yellow-300 text-center">{item.title}</h2>
+            <div className="flex items-center gap-1 mt-2">
+              <Star size={16} className="text-yellow-400" />
+              <span className="font-medium">{item.rating}</span>
+            </div>
+          </div>
+        </Link>
+      ))}
     </div>
   );
-
-  const displayTemples = liveData || temples;
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-yellow-50 pt-14">
-      <Header userPasses={userPasses} setUserPasses={setUserPasses} handleLogout={handleLogout} />
+    <div className="px-6 py-10 min-h-screen bg-gradient-to-br from-gray-900 via-purple-950 to-black text-white">
 
-      {/* Hero Section */}
-      <section className="relative w-full min-h-[75vh] md:min-h-[85vh] overflow-hidden">
-        <img
-          key={currentImageIndex}
-          src={temples[currentImageIndex].image}
-          alt={temples[currentImageIndex].name}
-          className="absolute w-full h-full object-cover transition-opacity duration-1000 opacity-100"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/70"></div>
-        <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-4 sm:px-6">
-          <h2 className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 text-3xl sm:text-4xl md:text-6xl font-extrabold drop-shadow-lg animate-pulse">
-            {temples[currentImageIndex].name}
-          </h2>
-          <p className="mt-4 sm:mt-6 text-gray-200 text-sm sm:text-lg md:text-xl max-w-2xl drop-shadow">
-            {temples[currentImageIndex].description}
-          </p>
-        </div>
-      </section>
+      {/* Banner Carousel */}
+      <div className="relative mb-16 rounded-3xl overflow-hidden shadow-2xl max-w-7xl mx-auto h-[420px]">
+        {content.map((item, index) => (
+          <div
+            key={item.id}
+            className={`absolute inset-0 transition-opacity duration-[2000ms] ease-in-out ${index === currentBanner ? "opacity-100 z-10" : "opacity-0 z-0"}`}
+          >
+            <img
+              src={item.poster}
+              alt={item.title}
+              className="w-full h-full object-cover brightness-50"
+            />
+            <div className="absolute inset-0 flex flex-col justify-center items-start p-8 md:p-16 bg-gradient-to-r from-black/70 via-black/30 to-transparent">
+              <h1 className="text-4xl md:text-5xl font-bold tracking-wide">{item.title}</h1>
+              <p className="text-gray-300 mt-3 max-w-lg">
+                <span className="font-semibold">{item.type}</span> | Genre: <span className="text-yellow-400 font-semibold">{item.genre.join(", ")}</span> | Rating: <span className="text-yellow-400 font-semibold">⭐ {item.rating}</span>
+              </p>
+              <Link
+                to={`/MovieDetails/${item.id}`}
+                className="mt-5 inline-block bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded-full transition shadow-md hover:shadow-lg"
+              >
+                Watch Now
+              </Link>
+            </div>
+          </div>
+        ))}
 
-      {/* Temple Cards */}
-      <section className="py-16 px-4 sm:px-6 max-w-7xl mx-auto w-full">
-        <h3 className="text-3xl sm:text-4xl font-extrabold text-center text-indigo-700 mb-4">
-          Select a Temple
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10">
-          {displayTemples.map((temple) => (
-            <TempleCard key={temple.id} {...temple} />
+        {/* Dots */}
+        <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 flex gap-2">
+          {content.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentBanner(index)}
+              className={`w-3 h-3 rounded-full ${index === currentBanner ? "bg-yellow-400" : "bg-gray-500"} transition`}
+            />
           ))}
         </div>
+      </div>
+
+      {/* Filters & Sorting */}
+      <div className="max-w-5xl mx-auto mb-10 flex flex-wrap justify-center sm:justify-between items-center gap-4">
+        <div className="relative inline-block">
+          <select
+            className="
+      appearance-none w-full bg-black/40 backdrop-blur-md text-white px-6 py-2 pr-10 rounded-lg 
+      border border-gray-600 hover:border-yellow-500 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400
+      transition-all duration-300 shadow-md outline-none cursor-pointer
+    "
+            value={genre}
+            onChange={(e) => setGenre(e.target.value)}
+          >
+            <option>All</option>
+            <option>Action</option>
+            <option>Adventure</option>
+            <option>Drama</option>
+            <option>Sci-Fi</option>
+            <option>Fantasy</option>
+            <option>Crime</option>
+            <option>Biography</option>
+            <option>Thriller</option>
+          </select>
+
+          {/* Custom arrow */}
+          <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+            <svg
+              className="w-4 h-4 text-white"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
+
+
+
+        <div className="flex gap-3">
+          <button
+            onClick={() => setSortOrder("high")}
+            className={`px-4 py-2 rounded-lg font-semibold ${sortOrder === "high" ? "bg-yellow-500 text-black" : "bg-gray-800 text-white hover:bg-gray-700"}`}
+          >
+            Rating High → Low
+          </button>
+          <button
+            onClick={() => setSortOrder("low")}
+            className={`px-4 py-2 rounded-lg font-semibold ${sortOrder === "low" ? "bg-yellow-500 text-black" : "bg-gray-800 text-white hover:bg-gray-700"}`}
+          >
+            Rating Low → High
+          </button>
+          <button
+            onClick={() => setSortOrder("default")}
+            className={`px-4 py-2 rounded-lg font-semibold ${sortOrder === "default" ? "bg-yellow-500 text-black" : "bg-gray-800 text-white hover:bg-gray-700"}`}
+          >
+            Reset
+          </button>
+        </div>
+      </div>
+
+      {/* Sections */}
+      <section className="mb-12">
+        <h2 className="text-3xl font-bold mb-5 border-l-4 border-yellow-400 pl-3 flex items-center gap-2">
+          <Film size={24} /> Popular Movies
+        </h2>
+        {renderGrid(filteredContent.filter((item) => item.type === "Movie"))}
       </section>
 
-      <Footer />
+      <section className="mb-12">
+        <h2 className="text-3xl font-bold mb-5 border-l-4 border-pink-400 pl-3 flex items-center gap-2">
+          <Tv size={24} /> Trending Series
+        </h2>
+        {renderGrid(filteredContent.filter((item) => item.type === "Series"))}
+      </section>
+
+      <section>
+        <h2 className="text-3xl font-bold mb-5 border-l-4 border-blue-400 pl-3 flex items-center gap-2">
+          <Zap size={24} /> Top Anime
+        </h2>
+        {renderGrid(filteredContent.filter((item) => item.type === "Anime"))}
+      </section>
+
     </div>
   );
-}
+};
+
+export default Home;

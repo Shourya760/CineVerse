@@ -1,172 +1,243 @@
-// Header.js
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import logo from "../assets/logo.png";
-import PassCard from "./PassCard";
-import { toPng } from "html-to-image";
+import React, { useState, useRef, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { FaBell, FaUserCircle, FaHeart, FaSearch } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
+import { SearchContext } from "../context/SearchContext";
+import { WatchlistContext } from "../context/WatchlistContext";
 
-export default function Header({ userPasses, setUserPasses, handleLogout }) {
-  const navigate = useNavigate();
+export default function Header() {
   const [profileOpen, setProfileOpen] = useState(false);
-  const [passesOpen, setPassesOpen] = useState(false);
+  const [watchlistOpen, setWatchlistOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const profileRef = useRef(null);
+  const watchlistRef = useRef(null);
+  const { searchQuery, setSearchQuery, searchResults } = useContext(SearchContext);
+  const { watchlist, removeFromWatchlist } = useContext(WatchlistContext);
+  const navigate = useNavigate();
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
-  const downloadPass = (passId) => {
-    const node = document.getElementById(`pass-${passId}`);
-    if (!node) return;
 
-    toPng(node, { cacheBust: true, backgroundColor: "#F3E8FF" })
-      .then((dataUrl) => {
-        const link = document.createElement("a");
-        link.download = `Pass_${passId}.png`;
-        link.href = dataUrl;
-        link.click();
-      })
-      .catch((err) => console.error("Failed to download pass:", err));
+  // Load user from localStorage
+  React.useEffect(() => {
+    const savedUser = localStorage.getItem("cineverseUser");
+    if (savedUser) setUser(JSON.parse(savedUser));
+  }, []);
+
+  // Close dropdowns when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (profileRef.current && !profileRef.current.contains(e.target)) setProfileOpen(false);
+      if (watchlistRef.current && !watchlistRef.current.contains(e.target)) setWatchlistOpen(false);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("cineverseUser");
+    setUser(null);
+    setProfileOpen(false);
+    navigate("/login");
   };
 
-  const cancelPass = (passId) => {
-    if (window.confirm("Are you sure you want to cancel this pass?")) {
-      const updated = userPasses.filter((p) => p.id !== passId);
-      setUserPasses(updated);
-      localStorage.setItem("userPasses", JSON.stringify(updated));
-    }
+  const dropdownVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: 10 },
   };
 
   return (
-    <header className="fixed top-0 left-0 w-full bg-gradient-to-r from-purple-600 via-pink-600 to-yellow-500 text-white shadow-lg z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex justify-between items-center">
+
+
+
+
+    <header className="bg-gradient-to-r from-black via-gray-900 to-gray-950 text-gray-200 shadow-md sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 md:px-12 py-4 relative">
         {/* Logo */}
-        <div
-          className="flex items-center gap-2 cursor-pointer"
-          onClick={() => navigate("/home")}
+        <Link
+          to="/home"
+          className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-400"
         >
-          <img
-            src={logo}
-            alt="Logo"
-            className="h-10 w-10 object-contain rounded-full border-2 border-white"
-          />
-          <span className="font-bold text-xl tracking-wide drop-shadow-lg">
-            Sudarshan
-          </span>
-        </div>
+          CineVerse
+        </Link>
 
-        {/* Navigation */}
-        <nav className="hidden md:flex gap-6 font-medium text-sm">
-          <button
-            onClick={() => navigate("/map")}
-            className="hover:text-yellow-100 transition transform hover:scale-105"
-          >
-            Map View
-          </button>
-        </nav>
+        {/* Search Bar */}
+        <div className="hidden md:flex flex-1 justify-center px-6 relative">
+          <div className="relative w-full max-w-md">
+            <input
+              type="text"
+              placeholder="Search movies, series, anime..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-2 bg-gray-800 rounded-full text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+            <FaSearch className="absolute right-4 top-2.5 text-gray-400" />
 
-        {/* Passes */}
-        {/* Passes & Profile */}
-        <div className="flex items-center gap-3 relative">
-          {/* Passes Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setPassesOpen(!passesOpen)}
-              className="flex items-center gap-2 bg-white text-purple-700 font-semibold px-4 py-2 rounded-full shadow-md hover:bg-purple-50 transition"
-            >
-              My Passes
-              <svg
-                className={`w-4 h-4 transition-transform ${passesOpen ? "rotate-180" : ""
-                  }`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
-
-            {passesOpen && (
-              <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl overflow-auto max-h-96 z-50 border border-purple-100 p-4 flex flex-col gap-3">
-                {userPasses.length === 0 ? (
-                  <div className="text-gray-500 text-center">No passes yet</div>
-                ) : (
-                  userPasses.map((pass) => (
-                    <div
-                      key={pass.id}
-                      className="flex items-center justify-between border-b last:border-b-0 pb-2"
+            {/* Search Suggestions */}
+            <AnimatePresence>
+              {searchResults.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="absolute top-full mt-1 w-full bg-gray-900 border border-gray-800 rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto"
+                >
+                  {searchResults.map((item) => (
+                    <Link
+                      key={item.id}
+                      to={`/MovieDetails/${item.id}`}
+                      onClick={() => setSearchQuery("")}
+                      className="block px-4 py-2 text-gray-200 hover:bg-gray-800 transition"
                     >
-                      <span className="text-gray-800 font-medium">
-                        {pass.templeName}
-                      </span>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => downloadPass(pass.id)}
-                          className="bg-purple-600 text-white px-2 py-1 rounded text-sm hover:bg-purple-700 transition"
-                        >
-                          Download
-                        </button>
-                        <button
-                          onClick={() => cancelPass(pass.id)}
-                          className="bg-red-600 text-white px-2 py-1 rounded text-sm hover:bg-red-700 transition"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-
-                      {/* Hidden pass for download */}
-                      <div className="hidden">
-                        <PassCard pass={pass} />
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Profile Dropdown */}
-          <div className="relative hidden sm:block">
-            <button
-              onClick={() => setProfileOpen(!profileOpen)}
-              className="flex items-center gap-2 bg-white text-purple-700 font-semibold px-4 py-2 rounded-full shadow-md hover:bg-purple-50 transition"
-            >
-              Profile
-              <svg
-                className={`w-4 h-4 transition-transform ${profileOpen ? "rotate-180" : ""
-                  }`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
-
-            {profileOpen && (
-              <div className="absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-xl overflow-hidden z-50 border border-purple-100">
-                <button
-                  className="w-full text-left px-4 py-2 text-gray-800 hover:bg-purple-50 transition"
-                  onClick={() => navigate("/profile")}
-                >
-                  Profile
-                </button>
-                <button
-                  className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition"
-                  onClick={handleLogout}
-                >
-                  Logout
-                </button>
-              </div>
-            )}
+                      {item.title}{" "}
+                      <span className="text-gray-500 text-sm">({item.type})</span>
+                    </Link>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 
+        {/* Icons */}
+        <div className="flex items-center space-x-4 md:space-x-6">
+          {/* Notifications */}
+          <button className="relative text-gray-300 hover:text-yellow-400 transition">
+            <FaBell className="text-lg" />
+            <span className="absolute -top-1 -right-2 bg-pink-500 text-white text-[10px] rounded-full px-1.5">
+              3
+            </span>
+          </button>
+
+          {/* Watchlist */}
+          <div className="relative" ref={watchlistRef}>
+            <button
+              onClick={() => {
+                setWatchlistOpen(!watchlistOpen);
+                setProfileOpen(false);
+              }}
+              className="relative text-gray-300 hover:text-purple-400 transition"
+            >
+              <FaHeart className="text-lg" />
+              {watchlist.length > 0 && (
+                <span className="absolute -top-1 -right-2 bg-purple-600 text-white text-[10px] rounded-full px-1.5">
+                  {watchlist.length}
+                </span>
+              )}
+            </button>
+
+            {/* Watchlist Dropdown */}
+            <AnimatePresence>
+              {watchlistOpen && (
+                <motion.div
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  variants={dropdownVariants}
+                  transition={{ duration: 0.2 }}
+                  className="absolute top-full right-0 mt-2 bg-gray-900 border border-gray-800 rounded-lg shadow-xl w-56 overflow-hidden z-50"
+                >
+                  <h4 className="text-sm font-semibold text-purple-400 px-4 py-2 border-b border-gray-800">
+                    Your Watchlist
+                  </h4>
+
+                  {watchlist.length > 0 ? (
+                    <ul className="max-h-48 overflow-y-auto">
+                      {watchlist.length > 0 ? (
+                        watchlist.map((item) => (
+                          <li
+                            key={item.id}
+                            className="flex items-center justify-between px-4 py-2 text-gray-300 text-sm hover:bg-gray-800 transition"
+                          >
+                            <Link
+                              to={`/MovieDetails/${item.id}`}
+                              onClick={() => setWatchlistOpen(false)}
+                              className="truncate hover:text-purple-400"
+                            >
+                              {item.title}
+                            </Link>
+                            <button
+                              onClick={() => removeFromWatchlist(item.id)}
+                              className="text-red-500 hover:text-red-600 ml-2"
+                              title="Remove from watchlist"
+                            >
+                              ✕
+                            </button>
+                          </li>
+                        ))
+                      ) : (
+                        <li className="px-4 py-2 text-gray-400 text-sm italic">No items in watchlist</li>
+                      )}
+                    </ul>
+
+                  ) : (
+                    <p className="text-gray-500 text-sm px-4 py-3 text-center">
+                      No movies yet.
+                    </p>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Profile */}
+          <div className="relative" ref={profileRef}>
+            <button
+              onClick={() => {
+                setProfileOpen(!profileOpen);
+                setWatchlistOpen(false);
+              }}
+              className="flex items-center text-gray-300 hover:text-pink-400 transition"
+            >
+              <FaUserCircle className="text-2xl" />
+              <span className="ml-2 text-sm hidden sm:block">
+                {user ? user.fullName : "Profile"}
+              </span>
+            </button>
+
+            {/* Profile Dropdown */}
+            <AnimatePresence>
+              {profileOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute right-0 mt-2 w-44 bg-gray-900 border border-gray-800 rounded-lg shadow-lg overflow-hidden z-50"
+                >
+                  <ul>
+                    <li
+                      onClick={() => {
+                        setProfileOpen(false);
+                        navigate("/profile");
+                      }}
+                      className="px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 cursor-pointer"
+                    >
+                      My Profile
+                    </li>
+                    <li
+                      onClick={() => {
+                        setProfileOpen(false); // close profile dropdown
+                        navigate("/settings"); // navigate to the settings page
+                      }}
+                      className="px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 cursor-pointer"
+                    >
+                      Settings
+                    </li>
+
+
+                    <li
+                      onClick={handleLogout}
+                      className="px-4 py-2 text-sm text-gray-300 bg-red-800 hover:bg-red-900 cursor-pointer"
+                    >
+                      Logout
+                    </li>
+                  </ul>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
       </div>
     </header>
   );
