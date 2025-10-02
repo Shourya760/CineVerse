@@ -61,7 +61,7 @@ const Home = () => {
     <div className="px-4 sm:px-6 py-8 min-h-screen bg-gradient-to-br from-gray-900 via-purple-950 to-black text-white">
 
       {/* Banner Carousel */}
-      <div className="relative mb-12 rounded-2xl overflow-hidden shadow-2xl max-w-7xl mx-auto h-64 sm:h-96 md:h-[420px]">
+      <div className="relative mb-12 overflow-hidden shadow-2xl max-w-7xl mx-auto h-64 sm:rounded-2xl sm:h-96 md:h-[420px]">
         {content.map((item, index) => (
           <div
             key={item.id}
@@ -103,11 +103,7 @@ const Home = () => {
       <div className="max-w-5xl mx-auto mb-8 flex flex-wrap justify-center sm:justify-between items-center gap-3">
         <div className="relative inline-block w-full sm:w-auto">
           <select
-            className="
-              appearance-none w-full sm:w-auto bg-black/40 backdrop-blur-md text-white px-4 sm:px-6 py-2 pr-10 rounded-lg 
-              border border-gray-600 hover:border-yellow-500 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400
-              transition-all duration-300 shadow-md outline-none cursor-pointer
-            "
+            className="appearance-none w-full sm:w-auto bg-black/40 backdrop-blur-md text-white px-4 sm:px-6 py-2 pr-10 rounded-lg border border-gray-600 hover:border-yellow-500 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400 transition-all duration-300 shadow-md outline-none cursor-pointer"
             value={genre}
             onChange={(e) => setGenre(e.target.value)}
           >
@@ -122,7 +118,6 @@ const Home = () => {
             <option>Thriller</option>
           </select>
 
-          {/* Custom arrow */}
           <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
             <svg
               className="w-4 h-4 text-white"
