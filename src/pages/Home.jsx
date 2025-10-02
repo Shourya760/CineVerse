@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { Star, Film, Tv, Zap } from "lucide-react";
 import moviesData from "../data/moviesData";
 
-
 const Home = () => {
   const [content, setContent] = useState([]);
   const [filteredContent, setFilteredContent] = useState([]);
@@ -23,7 +22,6 @@ const Home = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Filter & Sort
   useEffect(() => {
     let updated = [...content];
     if (genre !== "All") updated = updated.filter((item) => item.genre.includes(genre));
@@ -34,9 +32,8 @@ const Home = () => {
     setFilteredContent(updated);
   }, [genre, sortOrder, content]);
 
-  // Grid Renderer
   const renderGrid = (items) => (
-    <div className="grid gap-6 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 max-w-7xl mx-auto">
+    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 max-w-7xl mx-auto">
       {items.map((item) => (
         <Link
           key={item.id}
@@ -46,7 +43,7 @@ const Home = () => {
           <img
             src={item.poster}
             alt={item.title}
-            className="w-full h-64 object-cover rounded-2xl"
+            className="w-full h-64 sm:h-56 md:h-64 object-cover rounded-2xl"
           />
           <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4">
             <h2 className="text-lg font-semibold text-yellow-300 text-center">{item.title}</h2>
@@ -61,10 +58,10 @@ const Home = () => {
   );
 
   return (
-    <div className="px-6 py-10 min-h-screen bg-gradient-to-br from-gray-900 via-purple-950 to-black text-white">
+    <div className="px-4 sm:px-6 py-8 min-h-screen bg-gradient-to-br from-gray-900 via-purple-950 to-black text-white">
 
       {/* Banner Carousel */}
-      <div className="relative mb-16 rounded-3xl overflow-hidden shadow-2xl max-w-7xl mx-auto h-[420px]">
+      <div className="relative mb-12 rounded-2xl overflow-hidden shadow-2xl max-w-7xl mx-auto h-64 sm:h-96 md:h-[420px]">
         {content.map((item, index) => (
           <div
             key={item.id}
@@ -75,14 +72,14 @@ const Home = () => {
               alt={item.title}
               className="w-full h-full object-cover brightness-50"
             />
-            <div className="absolute inset-0 flex flex-col justify-center items-start p-8 md:p-16 bg-gradient-to-r from-black/70 via-black/30 to-transparent">
-              <h1 className="text-4xl md:text-5xl font-bold tracking-wide">{item.title}</h1>
-              <p className="text-gray-300 mt-3 max-w-lg">
+            <div className="absolute inset-0 flex flex-col justify-center items-start p-4 sm:p-8 md:p-16 bg-gradient-to-r from-black/70 via-black/30 to-transparent">
+              <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold tracking-wide">{item.title}</h1>
+              <p className="text-gray-300 mt-2 sm:mt-3 max-w-full sm:max-w-lg text-sm sm:text-base">
                 <span className="font-semibold">{item.type}</span> | Genre: <span className="text-yellow-400 font-semibold">{item.genre.join(", ")}</span> | Rating: <span className="text-yellow-400 font-semibold">⭐ {item.rating}</span>
               </p>
               <Link
                 to={`/MovieDetails/${item.id}`}
-                className="mt-5 inline-block bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-6 rounded-full transition shadow-md hover:shadow-lg"
+                className="mt-3 sm:mt-5 inline-block bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-1.5 sm:py-2 px-4 sm:px-6 rounded-full transition shadow-md hover:shadow-lg text-sm sm:text-base"
               >
                 Watch Now
               </Link>
@@ -91,7 +88,7 @@ const Home = () => {
         ))}
 
         {/* Dots */}
-        <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 flex gap-2">
+        <div className="absolute bottom-3 sm:bottom-5 left-1/2 transform -translate-x-1/2 flex gap-2">
           {content.map((_, index) => (
             <button
               key={index}
@@ -103,14 +100,14 @@ const Home = () => {
       </div>
 
       {/* Filters & Sorting */}
-      <div className="max-w-5xl mx-auto mb-10 flex flex-wrap justify-center sm:justify-between items-center gap-4">
-        <div className="relative inline-block">
+      <div className="max-w-5xl mx-auto mb-8 flex flex-wrap justify-center sm:justify-between items-center gap-3">
+        <div className="relative inline-block w-full sm:w-auto">
           <select
             className="
-      appearance-none w-full bg-black/40 backdrop-blur-md text-white px-6 py-2 pr-10 rounded-lg 
-      border border-gray-600 hover:border-yellow-500 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400
-      transition-all duration-300 shadow-md outline-none cursor-pointer
-    "
+              appearance-none w-full sm:w-auto bg-black/40 backdrop-blur-md text-white px-4 sm:px-6 py-2 pr-10 rounded-lg 
+              border border-gray-600 hover:border-yellow-500 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400
+              transition-all duration-300 shadow-md outline-none cursor-pointer
+            "
             value={genre}
             onChange={(e) => setGenre(e.target.value)}
           >
@@ -139,24 +136,22 @@ const Home = () => {
           </div>
         </div>
 
-
-
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-2 sm:gap-3">
           <button
             onClick={() => setSortOrder("high")}
-            className={`px-4 py-2 rounded-lg font-semibold ${sortOrder === "high" ? "bg-yellow-500 text-black" : "bg-gray-800 text-white hover:bg-gray-700"}`}
+            className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold ${sortOrder === "high" ? "bg-yellow-500 text-black" : "bg-gray-800 text-white hover:bg-gray-700"}`}
           >
             Rating High → Low
           </button>
           <button
             onClick={() => setSortOrder("low")}
-            className={`px-4 py-2 rounded-lg font-semibold ${sortOrder === "low" ? "bg-yellow-500 text-black" : "bg-gray-800 text-white hover:bg-gray-700"}`}
+            className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold ${sortOrder === "low" ? "bg-yellow-500 text-black" : "bg-gray-800 text-white hover:bg-gray-700"}`}
           >
             Rating Low → High
           </button>
           <button
             onClick={() => setSortOrder("default")}
-            className={`px-4 py-2 rounded-lg font-semibold ${sortOrder === "default" ? "bg-yellow-500 text-black" : "bg-gray-800 text-white hover:bg-gray-700"}`}
+            className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold ${sortOrder === "default" ? "bg-yellow-500 text-black" : "bg-gray-800 text-white hover:bg-gray-700"}`}
           >
             Reset
           </button>
@@ -164,27 +159,26 @@ const Home = () => {
       </div>
 
       {/* Sections */}
-      <section className="mb-12">
-        <h2 className="text-3xl font-bold mb-5 border-l-4 border-yellow-400 pl-3 flex items-center gap-2">
+      <section className="mb-10">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-4 border-l-4 border-yellow-400 pl-3 flex items-center gap-2">
           <Film size={24} /> Popular Movies
         </h2>
         {renderGrid(filteredContent.filter((item) => item.type === "Movie"))}
       </section>
 
-      <section className="mb-12">
-        <h2 className="text-3xl font-bold mb-5 border-l-4 border-pink-400 pl-3 flex items-center gap-2">
+      <section className="mb-10">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-4 border-l-4 border-pink-400 pl-3 flex items-center gap-2">
           <Tv size={24} /> Trending Series
         </h2>
         {renderGrid(filteredContent.filter((item) => item.type === "Series"))}
       </section>
 
-      <section>
-        <h2 className="text-3xl font-bold mb-5 border-l-4 border-blue-400 pl-3 flex items-center gap-2">
+      <section className="mb-10">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-4 border-l-4 border-blue-400 pl-3 flex items-center gap-2">
           <Zap size={24} /> Top Anime
         </h2>
         {renderGrid(filteredContent.filter((item) => item.type === "Anime"))}
       </section>
-
     </div>
   );
 };
