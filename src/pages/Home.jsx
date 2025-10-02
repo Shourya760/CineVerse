@@ -32,30 +32,35 @@ const Home = () => {
     setFilteredContent(updated);
   }, [genre, sortOrder, content]);
 
-  const renderGrid = (items) => (
-    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 max-w-7xl mx-auto">
-      {items.map((item) => (
-        <Link
-          key={item.id}
-          to={`/MovieDetails/${item.id}`}
-          className="group relative rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-purple-800/40 via-pink-800/30 to-yellow-600/20 backdrop-blur-md hover:scale-105 transition-transform duration-300 border border-gray-700"
-        >
+ const renderGrid = (items) => (
+  <div className="grid gap-4 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 max-w-7xl mx-auto">
+    {items.map((item) => (
+      <Link
+        key={item.id}
+        to={`/MovieDetails/${item.id}`}
+        className="group relative rounded-2xl overflow-hidden shadow-lg bg-gradient-to-br from-purple-800/40 via-pink-800/30 to-yellow-600/20 backdrop-blur-md hover:scale-105 transition-transform duration-300 border border-gray-700"
+      >
+        <div className="w-full aspect-[2/3]">
           <img
             src={item.poster}
             alt={item.title}
-            className="w-full h-64 sm:h-56 md:h-64 object-cover rounded-2xl"
+            className="w-full h-full object-cover rounded-2xl"
           />
-          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4">
-            <h2 className="text-lg font-semibold text-yellow-300 text-center">{item.title}</h2>
-            <div className="flex items-center gap-1 mt-2">
-              <Star size={16} className="text-yellow-400" />
-              <span className="font-medium">{item.rating}</span>
-            </div>
+        </div>
+        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-2 sm:p-4">
+          <h2 className="text-sm sm:text-lg font-semibold text-yellow-300 text-center">{item.title}</h2>
+          <div className="flex items-center gap-1 mt-1 sm:mt-2">
+            <Star size={14} className="text-yellow-400" />
+            <span className="font-medium text-sm sm:text-base">{item.rating}</span>
           </div>
-        </Link>
-      ))}
-    </div>
-  );
+        </div>
+      </Link>
+    ))}
+  </div>
+);
+
+
+
 
   return (
     <div className="px-4 sm:px-6 py-8 min-h-screen bg-gradient-to-br from-gray-900 via-purple-950 to-black text-white">
