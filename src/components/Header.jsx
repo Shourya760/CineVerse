@@ -1,35 +1,74 @@
-import React, { useState, useRef, useContext } from "react";
+import React, { useState, useRef, useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaBell, FaUserCircle, FaHeart, FaSearch, FaBars, FaTimes } from "react-icons/fa";
+import { FaBell, FaUserCircle, FaHeart, FaSearch } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { SearchContext } from "../context/SearchContext";
 import { WatchlistContext } from "../context/WatchlistContext";
 
+import Confetti from "react-confetti";
+
+// Reusable SearchDropdown
+function SearchDropdown({ results, onSelect }) {
+  return (
+    <AnimatePresence>
+      {results.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+          className="absolute top-full left-0 w-full bg-gray-900 border border-gray-800 rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto"
+        >
+          {results.map((item) => (
+            <Link
+              key={item.id}
+              to={`/MovieDetails/${item.id}`}
+              onClick={onSelect}
+              className="block px-4 py-2 text-gray-200 hover:bg-gray-800 transition truncate"
+            >
+              {item.title} <span className="text-gray-500 text-sm">({item.type})</span>
+            </Link>
+          ))}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 export default function Header() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [watchlistOpen, setWatchlistOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [user, setUser] = useState(null);
+
   const profileRef = useRef(null);
   const watchlistRef = useRef(null);
+  const mobileSearchRef = useRef(null);
+  const searchRef = useRef(null); // Desktop search ref
+
   const { searchQuery, setSearchQuery, searchResults } = useContext(SearchContext);
   const { watchlist, removeFromWatchlist } = useContext(WatchlistContext);
   const navigate = useNavigate();
 
-  React.useEffect(() => {
+  // Confetti state
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  useEffect(() => {
     const savedUser = localStorage.getItem("cineverseUser");
     if (savedUser) setUser(JSON.parse(savedUser));
   }, []);
 
-  React.useEffect(() => {
+  // Close dropdowns when clicking outside
+  useEffect(() => {
     const handleClickOutside = (e) => {
       if (profileRef.current && !profileRef.current.contains(e.target)) setProfileOpen(false);
       if (watchlistRef.current && !watchlistRef.current.contains(e.target)) setWatchlistOpen(false);
+      if (mobileSearchRef.current && !mobileSearchRef.current.contains(e.target)) setMobileSearchOpen(false);
+      if (searchRef.current && !searchRef.current.contains(e.target)) setSearchQuery("");
     };
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [setSearchQuery]);
 
   const handleLogout = () => {
     localStorage.removeItem("cineverseUser");
@@ -47,12 +86,9 @@ export default function Header() {
   return (
     <header className="bg-gradient-to-r from-black via-gray-900 to-gray-950 text-gray-200 shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 md:px-12 py-3 sm:py-4 relative">
-        
+
         {/* Left: Logo */}
         <div className="flex items-center space-x-3">
-          
-
-          {/* Logo */}
           <Link
             to="/home"
             className="text-xl sm:text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-400"
@@ -61,8 +97,8 @@ export default function Header() {
           </Link>
         </div>
 
-        {/* Search Bar (Desktop) */}
-        <div className="hidden md:flex flex-1 justify-center px-6 relative">
+        {/* Desktop Search */}
+        <div className="hidden md:flex flex-1 justify-center px-6 relative" ref={searchRef}>
           <div className="relative w-full max-w-md">
             <input
               type="text"
@@ -73,49 +109,40 @@ export default function Header() {
             />
             <FaSearch className="absolute right-4 top-2.5 text-gray-400" />
 
-            {/* Search Results */}
-            <AnimatePresence>
-              {searchResults.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  className="absolute top-full mt-1 w-full bg-gray-900 border border-gray-800 rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto"
-                >
-                  {searchResults.map((item) => (
-                    <Link
-                      key={item.id}
-                      to={`/MovieDetails/${item.id}`}
-                      onClick={() => setSearchQuery("")}
-                      className="block px-4 py-2 text-gray-200 hover:bg-gray-800 transition"
-                    >
-                      {item.title}{" "}
-                      <span className="text-gray-500 text-sm">({item.type})</span>
-                    </Link>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <SearchDropdown
+              results={searchResults}
+              onSelect={() => setSearchQuery("")}
+            />
           </div>
         </div>
 
         {/* Right Icons */}
         <div className="flex items-center space-x-3 sm:space-x-4 md:space-x-6">
-          {/* Mobile Search Icon */}
-          <button
-            onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-            className="md:hidden text-gray-300 hover:text-yellow-400 transition"
-          >
-            <FaSearch className="text-lg" />
-          </button>
+          {/* Notifications with Full-Screen Confetti */}
+          <div className="relative">
+            <button
+              onClick={() => {
+                setShowConfetti(true);
+                setTimeout(() => setShowConfetti(false), 2000); // 2 seconds confetti
+              }}
+              className="relative text-gray-300 hover:text-yellow-400 transition"
+            >
+              <FaBell className="text-lg" />
+              <span className="absolute -top-1 -right-2 bg-pink-500 text-white text-[9px] rounded-full px-1.5">
+                3
+              </span>
+            </button>
 
-          {/* Notifications */}
-          <button className="relative text-gray-300 hover:text-yellow-400 transition">
-            <FaBell className="text-lg" />
-            <span className="absolute -top-1 -right-2 bg-pink-500 text-white text-[9px] rounded-full px-1.5">
-              3
-            </span>
-          </button>
+            {showConfetti && (
+              <Confetti
+                width={window.innerWidth}
+                height={window.innerHeight}
+                numberOfPieces={5000}
+                recycle={false}
+                style={{ position: "fixed", top: 0, left: 0, zIndex: 9999 }}
+              />
+            )}
+          </div>
 
           {/* Watchlist */}
           <div className="relative" ref={watchlistRef}>
@@ -243,12 +270,13 @@ export default function Header() {
       <AnimatePresence>
         {mobileSearchOpen && (
           <motion.div
+            ref={mobileSearchRef}
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="md:hidden bg-gray-900 px-4 py-3 border-t border-gray-800"
+            className="md:hidden bg-gray-900 px-4 py-3 border-t border-gray-800 relative z-50"
           >
-            <div className="relative">
+            <div className="relative w-full">
               <input
                 type="text"
                 placeholder="Search movies, series, anime..."
@@ -257,6 +285,14 @@ export default function Header() {
                 className="w-full px-4 py-2 bg-gray-800 rounded-full text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
               <FaSearch className="absolute right-4 top-2.5 text-gray-400" />
+
+              <SearchDropdown
+                results={searchResults}
+                onSelect={() => {
+                  setSearchQuery("");
+                  setMobileSearchOpen(false);
+                }}
+              />
             </div>
           </motion.div>
         )}
