@@ -18,6 +18,15 @@ const userData = [
     "phone": "9998887777",
     "favoriteGenre": "Comedy / Romance",
     "joinedDate": "2025-09-15"
+  },
+   {
+    "id": 3,
+    "fullName": "Ram",
+    "email": "r@example.com",
+    "password": "123",
+    "phone": "9997878877",
+    "favoriteGenre": "Comedy / Romance",
+    "joinedDate": "2025-09-17"
   }
 ]
 

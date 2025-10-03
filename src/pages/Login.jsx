@@ -86,6 +86,7 @@ export default function Login() {
             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-4 focus:ring-indigo-300 focus:border-indigo-500 transition shadow-sm"
             placeholder="Enter your full name"
           />
+          sample: Ram
         </div>
 
         <div className="mb-6">
@@ -97,6 +98,7 @@ export default function Login() {
             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-4 focus:ring-indigo-300 focus:border-indigo-500 transition shadow-sm"
             placeholder="Enter your password"
           />
+          sample: 123
         </div>
 
         <button
