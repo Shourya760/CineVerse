@@ -36,7 +36,7 @@ function SearchDropdown({ results, onSelect }) {
 export default function Header() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [watchlistOpen, setWatchlistOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false); // Mobile/Full search
+  const [searchOpen, setSearchOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [showConfetti, setShowConfetti] = useState(false);
 
@@ -75,7 +75,6 @@ export default function Header() {
 
   return (
     <>
-      {/* Header */}
       <header className="bg-gradient-to-r from-black via-gray-900 to-gray-950 text-gray-200 shadow-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 md:px-12 py-3 sm:py-4 relative">
           {/* Logo */}
@@ -115,7 +114,6 @@ export default function Header() {
                 <FaSearch className="text-lg" />
               </button>
 
-              {/* Mobile Search Dropdown */}
               <AnimatePresence>
                 {searchOpen && (
                   <motion.div
@@ -188,7 +186,7 @@ export default function Header() {
                     exit="exit"
                     variants={dropdownVariants}
                     transition={{ duration: 0.2 }}
-                    className="absolute top-full right-0 mt-2 bg-gray-900 border border-gray-800 rounded-xl shadow-xl w-56 z-50"
+                    className="absolute top-full right-0 mt-2 bg-gray-900 border border-gray-800 rounded-xl shadow-xl w-56 z-[999]"
                   >
                     <h4 className="text-sm font-semibold text-purple-400 px-4 py-2 border-b border-gray-800">Your Watchlist</h4>
                     {watchlist.length > 0 ? (
@@ -220,15 +218,17 @@ export default function Header() {
             </div>
 
             {/* Profile */}
-            <div className="relative" ref={profileRef}>
+            <div className="relative flex items-center space-x-2" ref={profileRef}>
               <button
                 onClick={() => { setProfileOpen(!profileOpen); setWatchlistOpen(false); }}
                 className="flex items-center text-gray-300 hover:text-pink-400 transition"
               >
-                <FaUserCircle className="text-xl sm:text-2xl" />
-                <span className="ml-2 text-sm hidden sm:block">{user ? user.fullName : "Profile"}</span>
+                <FaUserCircle className="text-2xl" />
+                {/* Name removed for now, will add later */}
+                Profile
               </button>
 
+              {/* Dropdown */}
               <AnimatePresence>
                 {profileOpen && (
                   <motion.div
@@ -236,17 +236,34 @@ export default function Header() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute right-0 mt-2 w-44 bg-gray-900 border border-gray-800 rounded-xl shadow-lg overflow-hidden z-50"
+                    className="absolute right-0 top-full mt-2 w-44 bg-gray-900 border border-gray-800 rounded-xl shadow-lg overflow-hidden z-[999]"
                   >
                     <ul>
-                      <li onClick={() => { setProfileOpen(false); navigate("/profile"); }} className="px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 cursor-pointer rounded-md">My Profile</li>
-                      <li onClick={() => { setProfileOpen(false); navigate("/settings"); }} className="px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 cursor-pointer rounded-md">Settings</li>
-                      <li onClick={handleLogout} className="px-4 py-2 text-sm text-gray-300 bg-red-800 hover:bg-red-900 cursor-pointer rounded-md">Logout</li>
+                      <li
+                        onClick={() => { setProfileOpen(false); navigate("/profile"); }}
+                        className="px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 cursor-pointer rounded-md"
+                      >
+                        My Profile
+                      </li>
+                      <li
+                        onClick={() => { setProfileOpen(false); navigate("/settings"); }}
+                        className="px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 cursor-pointer rounded-md"
+                      >
+                        Settings
+                      </li>
+                      <li
+                        onClick={handleLogout}
+                        className="px-4 py-2 text-sm text-gray-300 bg-red-800 hover:bg-red-900 cursor-pointer rounded-md"
+                      >
+                        Logout
+                      </li>
                     </ul>
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
+
+
           </div>
         </div>
       </header>

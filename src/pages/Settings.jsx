@@ -1,17 +1,57 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaUser, FaBell, FaPalette, FaHeart, FaFilm, FaArrowLeft } from "react-icons/fa";
+import {
+  FaUser,
+  FaBell,
+  FaPalette,
+  FaHeart,
+  FaFilm,
+  FaArrowLeft,
+} from "react-icons/fa";
+import userData from "../data/userData.js"; // 
 
 const Settings = () => {
   const navigate = useNavigate();
+
+  
+  const savedUser = JSON.parse(localStorage.getItem("loggedInUser"));
+  const [formData, setFormData] = useState(savedUser || {});
+  
+  // Form state
+  useEffect(() => {
+    if (!savedUser) alert("No user logged in"), navigate("/login");
+  }, [navigate]);
+
+
+
+
   const [notifications, setNotifications] = useState(true);
-  const [favoriteGenre, setFavoriteGenre] = useState("Action");
   const [themeColor, setThemeColor] = useState("purple");
+
+  // ✅ Handle input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // ✅ Handle saving settings
+  const handleSave = () => {
+    console.log("Updated Settings:", {
+      ...formData,
+      notifications,
+      themeColor,
+    });
+
+    // Later this can send data to API like:
+    // fetch("/api/updateUser", { method: "POST", body: JSON.stringify(formData) });
+
+    alert("Settings saved successfully!");
+  };
 
   return (
     <div className="min-h-screen p-8 text-gray-200 bg-gradient-to-b from-black via-gray-900 to-gray-950 flex flex-col">
       <h1 className="text-4xl font-extrabold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-400">
-        Settings              (for now it is not working  )
+        Settings
       </h1>
 
       {/* Profile Section */}
@@ -24,7 +64,9 @@ const Settings = () => {
             <p className="font-medium mb-2">Full Name</p>
             <input
               type="text"
-              defaultValue="John Doe"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
               className="w-full p-2 rounded-md bg-gray-800 text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
@@ -32,7 +74,9 @@ const Settings = () => {
             <p className="font-medium mb-2">Email</p>
             <input
               type="email"
-              defaultValue="john@example.com"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               className="w-full p-2 rounded-md bg-gray-800 text-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
@@ -53,7 +97,7 @@ const Settings = () => {
               onChange={() => setNotifications(!notifications)}
               className="sr-only peer"
             />
-            <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer-checked:bg-purple-500 transition-all"></div>
+            <div className="w-11 h-6 bg-gray-700 rounded-full peer-checked:bg-purple-500 transition-all"></div>
             <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-5 transition-transform shadow-md"></div>
           </label>
         </div>
@@ -71,15 +115,18 @@ const Settings = () => {
             <FaFilm /> Favorite Genre
           </p>
           <select
-            value={favoriteGenre}
-            onChange={(e) => setFavoriteGenre(e.target.value)}
+            name="favoriteGenre"
+            value={formData.favoriteGenre}
+            onChange={handleChange}
             className="ml-auto p-2 rounded-md bg-gray-800 text-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500"
           >
-            {["Action", "Comedy", "Horror", "Anime", "Drama", "Sci-Fi"].map((genre) => (
-              <option key={genre} value={genre}>
-                {genre}
-              </option>
-            ))}
+            {["Action", "Comedy", "Horror", "Anime", "Drama", "Sci-Fi"].map(
+              (genre) => (
+                <option key={genre} value={genre}>
+                  {genre}
+                </option>
+              )
+            )}
           </select>
         </div>
 
@@ -93,9 +140,8 @@ const Settings = () => {
               <button
                 key={color}
                 onClick={() => setThemeColor(color)}
-                className={`w-8 h-8 rounded-full border-2 ${
-                  themeColor === color ? "border-white" : "border-gray-600"
-                } bg-${color}-500 transition-transform hover:scale-110`}
+                className={`w-8 h-8 rounded-full border-2 ${themeColor === color ? "border-white scale-110" : "border-gray-600"
+                  } bg-${color}-500 transition-transform hover:scale-110`}
               ></button>
             ))}
           </div>
@@ -104,7 +150,10 @@ const Settings = () => {
 
       {/* Save Button */}
       <div className="flex justify-end mb-6">
-        <button className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-full shadow-lg transition-all">
+        <button
+          onClick={handleSave}
+          className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-full shadow-lg transition-all"
+        >
           Save Changes
         </button>
       </div>

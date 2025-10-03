@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import userData from "../data/userData.js"; // ✅ Default user data
 
 export default function Login() {
-  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const [cursor, setCursor] = useState({ x: 0, y: 0 });
@@ -14,49 +15,37 @@ export default function Login() {
     "Jujutsu Kaisen", "Death Note", "Dragon Ball", "Chainsaw Man", "Spy x Family",
     "Avengers", "Batman", "Iron Man", "Harry Potter", "Friends",
     "Breaking Bad", "Stranger Things", "The Boys", "Game of Thrones",
-    "Naruto", "One Piece", "Bleach", "Avengers", "Dragon Ball",
   ];
 
-  // Track cursor movement
   useEffect(() => {
     const handleMouseMove = (e) => setCursor({ x: e.clientX, y: e.clientY });
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  // Smooth cursor-based floating
-  useEffect(() => {
-    const interval = setInterval(() => {
-      nameRefs.current.forEach((el) => {
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        const dx = cursor.x - (rect.left + rect.width / 2);
-        const dy = cursor.y - (rect.top + rect.height / 2);
-        const distance = Math.sqrt(dx * dx + dy * dy);
-
-        if (distance < 100) {
-          const angle = Math.atan2(dy, dx);
-          const moveX = -Math.cos(angle) * 2; // smaller distance
-          const moveY = -Math.sin(angle) * 2;
-
-          el.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.01)`;
-          el.style.transition = "transform 3s ease-out"; // slow and smooth
-        } else {
-          el.style.transform = `translate(0px, 0px)`;
-          el.style.transition = "transform 6s ease-in-out"; // gentle floating
-        }
-      });
-    }, 400); // slower interval
-    return () => clearInterval(interval);
-  }, [cursor]);
-
   const handleLogin = (e) => {
     e.preventDefault();
-    if (!email || !password) {
-      alert("Please enter both email and password.");
+
+    if (!name || !password) {
+      alert("⚠️ Please enter both name and password.");
       return;
     }
-    navigate("/home");
+
+    // ✅ Load all users (default + registered)
+    const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
+    const allUsers = [...userData, ...storedUsers];
+
+    // ✅ Find user by name (case-insensitive)
+    const user = allUsers.find(
+      (u) => u.fullName.toLowerCase() === name.toLowerCase() && u.password === password
+    );
+
+    if (user) {
+      localStorage.setItem("loggedInUser", JSON.stringify(user));
+      navigate("/home");
+    } else {
+      alert("❌ Invalid name or password. Please try again.");
+    }
   };
 
   return (
@@ -89,13 +78,13 @@ export default function Login() {
         </h2>
 
         <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-1">Email</label>
+          <label className="block text-gray-700 font-medium mb-1">Full Name</label>
           <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-4 focus:ring-indigo-300 focus:border-indigo-500 transition shadow-sm"
-            placeholder="Enter your email"
+            placeholder="Enter your full name"
           />
         </div>
 
@@ -119,35 +108,11 @@ export default function Login() {
 
         <p className="mt-4 text-sm text-center text-gray-600">
           Don’t have an account?{" "}
-          <a
-            href="/register"
-            className="text-indigo-600 font-semibold hover:underline"
-          >
+          <Link to="/register" className="text-indigo-600 font-semibold hover:underline">
             Register
-          </a>
+          </Link>
         </p>
       </form>
-
-      {/* Slower floating animations */}
-      <style>{`
-        @keyframes float0 {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-4px); }
-        }
-        @keyframes float1 {
-          0%, 100% { transform: translateY(2px); }
-          50% { transform: translateY(-5px); }
-        }
-        @keyframes float2 {
-          0%, 100% { transform: translateY(-3px); }
-          50% { transform: translateY(4px); }
-        }
-        .floating-name {
-          animation-iteration-count: infinite;
-          animation-timing-function: ease-in-out;
-          animation-duration: 18s;
-        }
-      `}</style>
     </div>
   );
 }
