@@ -20,7 +20,7 @@ const Home = () => {
     }, 6000);
 
     return () => clearInterval(interval);
-  }, []);
+    }, []);
 
   useEffect(() => {
     let updated = [...content];
@@ -32,6 +32,7 @@ const Home = () => {
     setFilteredContent(updated);
   }, [genre, sortOrder, content]);
 
+  
   const renderGrid = (items) => (
     <div className="grid gap-4 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 max-w-7xl mx-auto">
       {items.map((item) => (

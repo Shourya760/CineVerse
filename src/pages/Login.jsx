@@ -8,14 +8,9 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const [cursor, setCursor] = useState({ x: 0, y: 0 });
-  const nameRefs = useRef([]);
+  // const nameRefs = useRef([]);
 
-  const floatingNames = [
-    "Naruto", "One Piece", "Demon Slayer", "Attack on Titan", "Bleach",
-    "Jujutsu Kaisen", "Death Note", "Dragon Ball", "Chainsaw Man", "Spy x Family",
-    "Avengers", "Batman", "Iron Man", "Harry Potter", "Friends",
-    "Breaking Bad", "Stranger Things", "The Boys", "Game of Thrones",
-  ];
+  
 
   useEffect(() => {
     const handleMouseMove = (e) => setCursor({ x: e.clientX, y: e.clientY });
@@ -50,23 +45,14 @@ export default function Login() {
 
   return (
     <div className="relative flex h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-indigo-200 via-purple-100 to-yellow-100 px-4">
-      {/* Floating names background */}
+    
+      {/* Smooth animated gradient blobs background */}
       <div className="absolute inset-0 overflow-hidden">
-        {floatingNames.map((name, i) => (
-          <span
-            key={i}
-            ref={(el) => (nameRefs.current[i] = el)}
-            className="absolute text-indigo-600 font-semibold text-xs sm:text-sm opacity-40 select-none floating-name"
-            style={{
-              top: `${Math.random() * 90 + 2}%`,
-              left: `${Math.random() * 90 + 2}%`,
-              animation: `float${i % 3} ${15 + (i % 5) * 2}s ease-in-out infinite`,
-            }}
-          >
-            {name}
-          </span>
-        ))}
+        <div className="absolute top-1/4 left-1/3 w-72 h-72 bg-purple-400 opacity-30 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/3 w-80 h-80 bg-indigo-400 opacity-30 rounded-full blur-3xl animate-pulse delay-700"></div>
+        <div className="absolute top-1/2 right-1/4 w-64 h-64 bg-pink-400 opacity-20 rounded-full blur-3xl animate-pulse delay-1000"></div>
       </div>
+
 
       {/* Login Form */}
       <form

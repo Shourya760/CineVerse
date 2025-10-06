@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../context/ThemeContext";
+
+
 import {
   FaUser,
   FaBell,
@@ -13,10 +16,11 @@ import userData from "../data/userData.js"; //
 const Settings = () => {
   const navigate = useNavigate();
 
-  
+  const { darkMode, toggleTheme } = useTheme();
+
   const savedUser = JSON.parse(localStorage.getItem("loggedInUser"));
   const [formData, setFormData] = useState(savedUser || {});
-  
+
   // Form state
   useEffect(() => {
     if (!savedUser) alert("No user logged in"), navigate("/login");
@@ -130,22 +134,24 @@ const Settings = () => {
           </select>
         </div>
 
-        {/* Theme Color Picker */}
-        <div className="bg-gray-900 rounded-xl p-6 shadow-lg flex flex-col md:flex-row gap-4 items-center">
+
+        {/* Theme Mode Toggle */}
+        <div className="bg-gray-900 dark:bg-gray-800 rounded-xl p-6 shadow-lg flex items-center justify-between mt-4">
           <p className="font-medium flex items-center gap-2">
-            <FaHeart /> Theme Color
+            🌓 Theme Mode
           </p>
-          <div className="flex gap-3 ml-auto">
-            {["purple", "pink", "yellow", "blue", "green"].map((color) => (
-              <button
-                key={color}
-                onClick={() => setThemeColor(color)}
-                className={`w-8 h-8 rounded-full border-2 ${themeColor === color ? "border-white scale-110" : "border-gray-600"
-                  } bg-${color}-500 transition-transform hover:scale-110`}
-              ></button>
-            ))}
-          </div>
+          <label className="inline-flex relative items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={darkMode}
+              onChange={toggleTheme}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-700 rounded-full peer-checked:bg-purple-500 transition-all"></div>
+            <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full peer-checked:translate-x-5 transition-transform shadow-md"></div>
+          </label>
         </div>
+
       </section>
 
       {/* Save Button */}
@@ -158,6 +164,13 @@ const Settings = () => {
         </button>
       </div>
 
+
+
+      <p className="text-black dark:text-yellow-400">
+        Dark mode is {darkMode ? "ON 🌙" : "OFF ☀️"}
+      </p>
+
+      
       {/* Go Back Home Button at the bottom */}
       <div className="flex justify-center">
         <button

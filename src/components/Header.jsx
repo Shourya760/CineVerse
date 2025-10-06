@@ -14,17 +14,17 @@ function SearchDropdown({ results, onSelect }) {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
-          className="absolute top-full left-0 w-full bg-gray-900 border border-gray-800 rounded-xl shadow-xl z-50 max-h-64 overflow-y-auto"
+          className="absolute top-full left-0 w-full bg-gray-800 text-white border border-gray-700 rounded-xl shadow-lg z-50 max-h-64 overflow-y-auto"
         >
           {results.map((item) => (
             <Link
               key={item.id}
               to={`/MovieDetails/${item.id}`}
               onClick={onSelect}
-              className="block px-4 py-3 text-gray-200 hover:bg-purple-800 transition truncate rounded-md mx-2 my-1"
+              className="block px-4 py-3 hover:bg-yellow-600/20 transition truncate rounded-md mx-2 my-1"
             >
               <span className="font-medium">{item.title}</span>
-              <span className="text-gray-400 text-sm ml-2">({item.type})</span>
+              <span className="text-gray-300 text-sm ml-2">({item.type})</span>
             </Link>
           ))}
         </motion.div>
@@ -53,7 +53,6 @@ export default function Header() {
     if (savedUser) setUser(JSON.parse(savedUser));
   }, []);
 
-  // Close dropdowns/search when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (profileRef.current && !profileRef.current.contains(e.target)) setProfileOpen(false);
@@ -75,41 +74,40 @@ export default function Header() {
 
   return (
     <>
-      <header className="bg-gradient-to-r from-black via-gray-900 to-gray-950 text-gray-200 shadow-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 md:px-12 py-3 sm:py-4 relative">
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-gray-900/90 shadow-md">
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 md:px-12 py-3 sm:py-4">
+
           {/* Logo */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center flex-shrink-0">
             <Link
               to="/home"
-              className="text-xl sm:text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-400"
+              className="flex items-center space-x-2 font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600 text-2xl sm:text-3xl md:text-4xl"
             >
-              CineVerse
+              <span>CineVerse</span>
             </Link>
           </div>
 
           {/* Desktop Search */}
-          <div className="hidden sm:block relative w-80 md:w-96">
+          <div className="hidden sm:flex relative flex-1 max-w-lg">
             <input
               type="text"
               placeholder="Search movies, series, anime..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-3 rounded-full bg-gray-800 text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 shadow-md placeholder-gray-400"
+              className="w-full px-4 py-2 md:py-3 rounded-full bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 shadow-sm transition"
             />
-            <FaSearch className="absolute right-3 top-3 text-gray-400" />
-            <SearchDropdown
-              results={searchResults}
-              onSelect={() => setSearchQuery("")}
-            />
+            <FaSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <SearchDropdown results={searchResults} onSelect={() => setSearchQuery("")} />
           </div>
 
           {/* Right Icons */}
-          <div className="flex items-center space-x-3 sm:space-x-4 md:space-x-6">
-            {/* Mobile Search Icon */}
-            <div className="relative" ref={searchRef}>
+          <div className="flex items-center space-x-4 sm:space-x-6">
+
+            {/* Mobile Search */}
+            <div className="sm:hidden relative" ref={searchRef}>
               <button
                 onClick={() => setSearchOpen(!searchOpen)}
-                className="sm:hidden text-gray-300 hover:text-yellow-400 transition"
+                className="text-gray-300 hover:text-yellow-500 transition"
               >
                 <FaSearch className="text-lg" />
               </button>
@@ -117,21 +115,29 @@ export default function Header() {
               <AnimatePresence>
                 {searchOpen && (
                   <motion.div
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    variants={dropdownVariants}
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute top-full right-0 mt-2 w-72 sm:w-80 bg-gray-900 border border-gray-800 rounded-xl shadow-xl z-50 p-3"
+                    className="fixed top-0 left-0 w-full px-4 pt-4 z-50 bg-gray-900 shadow-md"
                   >
-                    <input
-                      type="text"
-                      placeholder="Search movies, series, anime..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      autoFocus
-                      className="w-full px-3 py-2 rounded-full bg-gray-800 text-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 mb-2"
-                    />
+                    <div className="flex items-center">
+                      <input
+                        type="text"
+                        placeholder="Search movies, series, anime..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        autoFocus
+                        className="flex-1 px-4 py-2 rounded-full bg-gray-800 text-white text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500 transition"
+                      />
+                      <button
+                        onClick={() => setSearchOpen(false)}
+                        className="ml-2 text-gray-400 hover:text-white transition"
+                      >
+                        ✕
+                      </button>
+                    </div>
+
                     <SearchDropdown
                       results={searchResults}
                       onSelect={() => {
@@ -150,10 +156,10 @@ export default function Header() {
                 setShowConfetti(true);
                 setTimeout(() => setShowConfetti(false), 2000);
               }}
-              className="relative text-gray-300 hover:text-yellow-400 transition"
+              className="relative text-gray-300 hover:text-yellow-500 transition"
             >
               <FaBell className="text-lg" />
-              <span className="absolute -top-1 -right-2 bg-pink-500 text-white text-[9px] rounded-full px-1.5">3</span>
+              <span className="absolute -top-1 -right-2 bg-red-500 text-white text-[9px] rounded-full px-1.5"></span>
             </button>
 
             {showConfetti && (
@@ -186,17 +192,17 @@ export default function Header() {
                     exit="exit"
                     variants={dropdownVariants}
                     transition={{ duration: 0.2 }}
-                    className="absolute top-full right-0 mt-2 bg-gray-900 border border-gray-800 rounded-xl shadow-xl w-56 z-[999]"
+                    className="absolute top-full right-0 mt-2 bg-gray-800 text-white border border-gray-700 rounded-xl shadow-lg w-56 z-[999]"
                   >
-                    <h4 className="text-sm font-semibold text-purple-400 px-4 py-2 border-b border-gray-800">Your Watchlist</h4>
+                    <h4 className="text-sm font-semibold text-yellow-400 px-4 py-2 border-b border-gray-700">Your Watchlist</h4>
                     {watchlist.length > 0 ? (
                       <ul className="max-h-48 overflow-y-auto">
                         {watchlist.map((item) => (
-                          <li key={item.id} className="flex items-center justify-between px-4 py-2 text-gray-300 text-sm hover:bg-purple-800 rounded-md mx-2 my-1 transition">
+                          <li key={item.id} className="flex items-center justify-between px-4 py-2 hover:bg-yellow-500/20 rounded-md mx-2 my-1 transition">
                             <Link
                               to={`/MovieDetails/${item.id}`}
                               onClick={() => setWatchlistOpen(false)}
-                              className="truncate hover:text-purple-300"
+                              className="truncate"
                             >
                               {item.title}
                             </Link>
@@ -210,7 +216,7 @@ export default function Header() {
                         ))}
                       </ul>
                     ) : (
-                      <p className="text-gray-400 text-sm px-4 py-3 text-center">No movies yet.</p>
+                      <p className="text-gray-300 text-sm px-4 py-3 text-center">No movies yet.</p>
                     )}
                   </motion.div>
                 )}
@@ -224,11 +230,9 @@ export default function Header() {
                 className="flex items-center text-gray-300 hover:text-pink-400 transition"
               >
                 <FaUserCircle className="text-2xl" />
-                {/* Name removed for now, will add later */}
-                Profile
+                <span className="hidden sm:inline ml-1 text-sm">{user?.name || "Profile"}</span>
               </button>
 
-              {/* Dropdown */}
               <AnimatePresence>
                 {profileOpen && (
                   <motion.div
@@ -236,24 +240,24 @@ export default function Header() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute right-0 top-full mt-2 w-44 bg-gray-900 border border-gray-800 rounded-xl shadow-lg overflow-hidden z-[999]"
+                    className="absolute right-0 top-full mt-2 w-44 bg-gray-800 text-white border border-gray-700 rounded-xl shadow-lg overflow-hidden z-[999]"
                   >
                     <ul>
                       <li
                         onClick={() => { setProfileOpen(false); navigate("/profile"); }}
-                        className="px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 cursor-pointer rounded-md"
+                        className="px-4 py-2 text-sm hover:bg-yellow-500/20 cursor-pointer rounded-md"
                       >
                         My Profile
                       </li>
                       <li
                         onClick={() => { setProfileOpen(false); navigate("/settings"); }}
-                        className="px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 cursor-pointer rounded-md"
+                        className="px-4 py-2 text-sm hover:bg-yellow-500/20 cursor-pointer rounded-md"
                       >
                         Settings
                       </li>
                       <li
                         onClick={handleLogout}
-                        className="px-4 py-2 text-sm text-gray-300 bg-red-800 hover:bg-red-900 cursor-pointer rounded-md"
+                        className="px-4 py-2 text-sm bg-red-600 hover:bg-red-700 cursor-pointer rounded-md"
                       >
                         Logout
                       </li>
@@ -262,7 +266,6 @@ export default function Header() {
                 )}
               </AnimatePresence>
             </div>
-
 
           </div>
         </div>
