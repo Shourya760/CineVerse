@@ -1,7 +1,7 @@
 // src/pages/Home.jsx
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Star, Film, Tv, Zap } from "lucide-react";
+import { Star, Film, Tv, Zap ,ImageOff} from "lucide-react";
 import moviesData from "../data/moviesData";
 
 const Home = () => {
@@ -10,6 +10,8 @@ const Home = () => {
   const [genre, setGenre] = useState("All");
   const [sortOrder, setSortOrder] = useState("default");
   const [currentBanner, setCurrentBanner] = useState(0);
+    const [imgError, setImgError] = useState(false);
+
 
   useEffect(() => {
     setContent(moviesData);
@@ -20,7 +22,7 @@ const Home = () => {
     }, 6000);
 
     return () => clearInterval(interval);
-    }, []);
+  }, []);
 
   useEffect(() => {
     let updated = [...content];
@@ -32,7 +34,7 @@ const Home = () => {
     setFilteredContent(updated);
   }, [genre, sortOrder, content]);
 
-  
+
   const renderGrid = (items) => (
     <div className="grid gap-4 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 max-w-7xl mx-auto">
       {items.map((item) => (
@@ -108,8 +110,8 @@ const Home = () => {
               key={index}
               onClick={() => setCurrentBanner(index)}
               className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${index === currentBanner
-                  ? "bg-yellow-400 scale-125 shadow-[0_0_8px_rgba(250,204,21,0.8)]"
-                  : "bg-gray-600 hover:bg-gray-400"
+                ? "bg-yellow-400 scale-125 shadow-[0_0_8px_rgba(250,204,21,0.8)]"
+                : "bg-gray-600 hover:bg-gray-400"
                 }`}
             />
           ))}
@@ -161,8 +163,8 @@ const Home = () => {
               key={btn.value}
               onClick={() => setSortOrder(btn.value)}
               className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold text-xs sm:text-sm ${sortOrder === btn.value
-                  ? "bg-yellow-500 text-black"
-                  : "bg-gray-800 text-white hover:bg-gray-700"
+                ? "bg-yellow-500 text-black"
+                : "bg-gray-800 text-white hover:bg-gray-700"
                 }`}
             >
               {btn.label}

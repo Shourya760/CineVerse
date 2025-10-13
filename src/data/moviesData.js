@@ -451,6 +451,33 @@ const moviesData = [
       }
     ],
   },
+  {
+    id: 1,
+    title: "Chainsaw Man",
+    type: "Anime",
+    poster: "https://image.tmdb.org/t/p/w1280/npdB6eFzizki0WaZ1OvKcJrWe97.jpg",
+    releaseDate: "2022-10-11",
+    genre: ["Horror"],
+    rating: 8.6,
+    reviewsCount: 2,
+    description:
+      "Denji merges with his pet devil Pochita to become Chainsaw Man and fights devils for survival.",
+    cast: ["Kikunosuke Toya", "Tomori Kusunoki", "Shogo Sakata", "Fairouz Ai"],
+    trailer: "https://www.youtube.com/embed/q15CRdE5Bv0",
+    reviews: [
+      {
+        id: 2001,
+        user: "IMDb",
+        text: "An insane, stylish, and brutal anime that's as emotional as it is violent.",
+      },
+      {
+        id: 2002,
+        user: "Rotten Tomatoes",
+        text: "Chainsaw Man is a bloody, funny, and emotionally charged ride through chaos.",
+      },
+    ],
+  },
+  
 ];
 
 export default moviesData;  
